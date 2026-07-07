@@ -56,4 +56,4 @@ async function bootstrap() {
   logger.log(`📚 Swagger UI available at http://localhost:${port}/api`);
 }
 
-bootstrap();
+void bootstrap();

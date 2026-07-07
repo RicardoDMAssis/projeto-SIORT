@@ -4,6 +4,8 @@ import { ParticipantsModule } from './participants/participants.module';
 import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { CertificatesModule } from './certificates/certificates.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -13,5 +15,7 @@ import { CertificatesModule } from './certificates/certificates.module';
     EnrollmentsModule,
     CertificatesModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
