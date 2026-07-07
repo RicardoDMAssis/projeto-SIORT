@@ -1,5 +1,5 @@
 .section {
-  background: var(--surface);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.04) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -95,12 +95,12 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  background: rgba(10, 38, 71, 0.4);
+  background: rgba(15, 118, 110, 0.18);
   transition: background var(--transition-base);
 }
 
 .videoCard:hover .thumbnailOverlay {
-  background: rgba(10, 38, 71, 0.2);
+  background: rgba(15, 118, 110, 0.12);
 }
 
 .playButton {

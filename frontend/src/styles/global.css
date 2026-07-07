@@ -2,12 +2,12 @@
 
 :root {
   /* Colors */
-  --primary: #10B981;
-  --primary-light: #34D399;
-  --primary-mid: #059669;
-  --accent: #10B981;
-  --accent-glow: rgba(16, 185, 129, 0.1);
-  --accent-bright: #10B981;
+  --primary: #0f5076;
+  --primary-light: #2dbbd4;
+  --primary-mid: #169ed4;
+  --accent: #2563EB;
+  --accent-glow: rgba(37, 99, 235, 0.14);
+  --accent-bright: #468dff;
   --surface: #FFFFFF;
   --surface-alt: #F1F5F9;
   --surface-dark: #FFFFFF;
@@ -15,8 +15,8 @@
   --white: #FFFFFF;
   --text: #0F172A;
   --text-light: #1E293B;
-  --text-muted: #475569;
-  --text-muted-light: #64748B;
+  --text-muted: #30445f;
+  --text-muted-light: #949494;
   --success: #10B981;
   --success-bg: #D1FAE5;
   --error: #EF4444;
@@ -106,8 +106,9 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   color: var(--text);
-  background: linear-gradient(180deg, var(--surface-dark) 0%, var(--surface-dark-alt) 100%) fixed;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%) fixed;
   overflow-x: hidden;
+  color-scheme: light;
 }
 
 a {

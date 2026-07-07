@@ -1,6 +1,6 @@
 .footer {
-  background: var(--surface-dark);
-  border-top: 1px solid rgba(91, 181, 245, 0.08);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(37, 99, 235, 0.04) 100%);
+  border-top: 1px solid rgba(37, 99, 235, 0.12);
   padding: var(--space-16) 0 var(--space-8);
 }
 
@@ -21,7 +21,7 @@
   gap: var(--space-3);
   font-weight: 700;
   font-size: var(--font-size-xl);
-  color: var(--white);
+  color: var(--primary-mid);
   margin-bottom: var(--space-4);
 }
 

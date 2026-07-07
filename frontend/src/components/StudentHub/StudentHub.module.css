@@ -2,8 +2,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--surface-dark);
-  color: var(--white);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.05) 100%);
+  color: var(--text);
 }
 
 .navbar {
@@ -11,8 +11,8 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4) var(--space-8);
-  background: rgba(23, 25, 29, 0.9);
-  border-bottom: 1px solid rgba(229, 228, 226, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.12);
   backdrop-filter: blur(10px);
 }
 
@@ -35,7 +35,7 @@
 
 .viewName {
   font-size: var(--font-size-sm);
-  color: var(--text-muted-light);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .welcomeText strong {
-  color: var(--white);
+  color: var(--primary-mid);
 }
 
 .logoutBtn {
@@ -135,10 +135,11 @@
 }
 
 .coursePanel {
-  background: rgba(23, 25, 29, 0.5);
-  border: 1px solid rgba(229, 228, 226, 0.05);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
 }
 
 .courseHeaderInfo {
@@ -155,7 +156,7 @@
 .courseTitle {
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: var(--primary-mid);
   margin: var(--space-2) 0;
 }
 
@@ -165,9 +166,9 @@
 }
 
 .videoPlayerContainer {
-  background: #000000;
+  background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(37, 99, 235, 0.06) 100%);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(229, 228, 226, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.12);
   aspect-ratio: 16/9;
   position: relative;
   overflow: hidden;
@@ -202,14 +203,14 @@
 
 .videoTitle {
   font-size: var(--font-size-base);
-  color: var(--white);
+  color: var(--primary-mid);
   font-weight: 500;
   text-align: center;
 }
 
 .videoControls {
   z-index: 10;
-  background: rgba(11, 12, 14, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   padding: var(--space-3) var(--space-6);
   width: 100%;
   margin-top: auto;
@@ -268,7 +269,7 @@
   font-size: var(--font-size-lg);
   font-weight: 600;
   margin-bottom: var(--space-3);
-  color: var(--white);
+  color: var(--primary-mid);
 }
 
 .descriptionSection p {
@@ -302,8 +303,8 @@
 }
 
 .sidebarSection {
-  background: rgba(23, 25, 29, 0.4);
-  border: 1px solid rgba(229, 228, 226, 0.05);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
 }
@@ -311,7 +312,7 @@
 .sidebarTitle {
   font-size: var(--font-size-base);
   font-weight: 700;
-  color: var(--white);
+  color: var(--primary-mid);
   margin-bottom: var(--space-4);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -329,8 +330,8 @@
   gap: var(--space-2);
   text-align: left;
   padding: var(--space-4);
-  background: rgba(11, 12, 14, 0.3);
-  border: 1px solid rgba(229, 228, 226, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(37, 99, 235, 0.1);
   border-radius: var(--radius-lg);
   transition: all var(--transition-fast);
 }

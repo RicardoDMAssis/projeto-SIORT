@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: radial-gradient(ellipse at 30% 50%, var(--primary-light) 0%, var(--primary) 40%, #050e1a 100%);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.06) 100%);
 }
 
 .particlesContainer {
@@ -38,8 +38,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(91, 181, 245, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91, 181, 245, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 118, 110, 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
 }
@@ -57,10 +57,10 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-5);
-  background: rgba(91, 181, 245, 0.1);
-  border: 1px solid rgba(91, 181, 245, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: var(--radius-full);
-  color: var(--accent-glow);
+  color: var(--accent);
   font-size: var(--font-size-sm);
   font-weight: 500;
   margin-bottom: var(--space-8);
@@ -78,14 +78,15 @@
 .title {
   font-size: var(--font-size-6xl);
   font-weight: 800;
-  color: var(--white);
+  color: var(--primary-mid);
   line-height: 1.1;
   margin-bottom: var(--space-6);
   letter-spacing: -0.03em;
 }
 
 .titleAccent {
-  background: linear-gradient(135deg, var(--accent-glow), var(--accent-bright));
+  background: linear-gradient(135deg, var(--primary-mid), var(--accent-bright));
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -120,7 +121,7 @@
 }
 
 .eventInfoItem svg {
-  color: var(--accent-glow);
+  color: var(--accent);
 }
 
 .ctas {
@@ -133,7 +134,7 @@
 
 .ctaPrimary {
   padding: var(--space-4) var(--space-10);
-  background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+  background: linear-gradient(135deg, var(--primary-mid), var(--accent-bright));
   color: var(--white);
   border-radius: var(--radius-full);
   font-weight: 700;
@@ -164,9 +165,9 @@
 
 .ctaSecondary {
   padding: var(--space-4) var(--space-10);
-  background: transparent;
-  color: var(--white);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary-mid);
+  border: 1px solid rgba(37, 99, 235, 0.16);
   border-radius: var(--radius-full);
   font-weight: 600;
   font-size: var(--font-size-lg);
@@ -174,8 +175,8 @@
 }
 
 .ctaSecondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--white);
+  border-color: rgba(37, 99, 235, 0.28);
   transform: translateY(-2px);
 }
 

@@ -1,8 +1,8 @@
 .section {
   padding: var(--space-20) 0;
-  background: linear-gradient(180deg, var(--primary) 0%, var(--surface-dark) 100%);
-  color: var(--white);
-  border-bottom: 1px solid rgba(91, 181, 245, 0.1);
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.04) 0%, rgba(37, 99, 235, 0.06) 100%);
+  color: var(--text);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.12);
   position: relative;
 }
 
@@ -25,7 +25,7 @@
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--accent-glow);
+  color: var(--accent);
   letter-spacing: 0.15em;
   margin-bottom: var(--space-3);
   text-transform: uppercase;
@@ -36,7 +36,8 @@
   font-weight: 800;
   line-height: 1.25;
   margin-bottom: var(--space-6);
-  background: linear-gradient(135deg, var(--white), var(--accent-bright));
+  background: linear-gradient(135deg, var(--primary-mid), var(--accent-bright));
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -95,10 +96,11 @@
 .quickAccess {
   margin-top: var(--space-16);
   padding: var(--space-8);
-  background: rgba(20, 66, 114, 0.25);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: var(--radius-2xl);
-  border: 1px solid rgba(91, 181, 245, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  box-shadow: var(--shadow-md);
 }
 
 .quickAccessTitle {
@@ -106,7 +108,7 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: var(--space-8);
-  color: var(--white);
+  color: var(--primary-mid);
   letter-spacing: -0.01em;
 }
 
@@ -124,8 +126,8 @@
 }
 
 .cardButton {
-  background: rgba(13, 27, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(37, 99, 235, 0.05));
+  border: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   text-align: left;
@@ -162,7 +164,7 @@
   gap: var(--space-4);
   font-weight: 700;
   font-size: var(--font-size-base);
-  color: var(--white);
+  color: var(--primary-mid);
 }
 
 .iconWrapper {
@@ -201,7 +203,7 @@
   justify-content: space-between;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--accent-glow);
+  color: var(--accent);
   margin-top: var(--space-2);
 }
 
