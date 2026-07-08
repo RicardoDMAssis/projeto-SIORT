@@ -99,7 +99,7 @@
 
 .counterSubtitle {
   font-size: var(--font-size-xs);
-  color: var(--accent-glow);
+  color: var(--primary);
   font-weight: 500;
 }
 

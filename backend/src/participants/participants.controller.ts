@@ -2,6 +2,8 @@ import {
   Controller,
   Post,
   Get,
+  Put,
+  Delete,
   Param,
   Body,
   ParseIntPipe,
@@ -46,6 +48,18 @@ export class ParticipantsController {
   async count() {
     const total = await this.participantsService.count();
     return { count: total };
+  }
+
+  /** PUT /participants/:id — Update participant */
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<CreateParticipantDto> & { role?: string; institution?: string }) {
+    return this.participantsService.update(id, dto);
+  }
+
+  /** DELETE /participants/:id — Remove participant */
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.participantsService.remove(id);
   }
 
   /** GET /participants/:id — Get participant by ID */

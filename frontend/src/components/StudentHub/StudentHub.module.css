@@ -169,7 +169,7 @@
   background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(37, 99, 235, 0.06) 100%);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(37, 99, 235, 0.12);
-  aspect-ratio: 16/9;
+  min-height: 1080px;
   position: relative;
   overflow: hidden;
   margin-bottom: var(--space-6);
@@ -178,9 +178,24 @@
   justify-content: space-between;
 }
 
+.videoStage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #020617;
+}
+
+.videoFrame,
+.videoElement {
+  width: 100%;
+  flex: 1;
+  min-height: 280px;
+  border: 0;
+  background: #000;
+}
+
 .videoOverlay {
-  position: absolute;
-  inset: 0;
+  flex: 1;
   background: radial-gradient(circle, rgba(23, 25, 29, 0.4) 0%, rgba(11, 12, 14, 0.9) 100%);
   display: flex;
   flex-direction: column;
@@ -188,6 +203,14 @@
   justify-content: center;
   gap: var(--space-4);
   padding: var(--space-6);
+}
+
+.videoHint {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: var(--font-size-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .playIcon {
@@ -309,6 +332,88 @@
   padding: var(--space-6);
 }
 
+.enrollSection {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.enrollSectionHeader {
+  margin-bottom: var(--space-4);
+}
+
+.enrollSectionText {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.availableCourseList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.availableCourseCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.03) 0%, rgba(255,255,255,0.9) 100%);
+}
+
+.availableCourseInfo {
+  flex: 1;
+}
+
+.availableCourseTitle {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--primary-mid);
+  margin-bottom: var(--space-2);
+}
+
+.availableCourseDescription {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin-bottom: var(--space-3);
+}
+
+.enrollActionBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: var(--surface-dark);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+}
+
+.enrollActionBtn:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.noAvailableCourses {
+  padding: var(--space-4);
+  border: 1px dashed rgba(37, 99, 235, 0.16);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  text-align: center;
+}
+
 .sidebarTitle {
   font-size: var(--font-size-base);
   font-weight: 700;
@@ -316,6 +421,167 @@
   margin-bottom: var(--space-4);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.statusPill,
+.statusPillSuccess {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statusPill {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary);
+}
+
+.statusPillSuccess {
+  background: rgba(34, 197, 94, 0.14);
+  color: #15803d;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) 0;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.certificateSection {
+  border-top: 1px solid rgba(229, 228, 226, 0.08);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+}
+
+.certificateSectionHeader h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--primary-mid);
+  margin-bottom: var(--space-2);
+}
+
+.certificateSectionHeader p {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.certificateActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.certificateActionBtn,
+.certificateActionBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.certificateActionBtn {
+  background: var(--primary);
+  color: var(--surface-dark);
+  border: none;
+}
+
+.certificateActionBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.certificateActionBtnSecondary {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--primary);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+}
+
+.certificateActionBtn:hover:not(:disabled),
+.certificateActionBtnSecondary:hover {
+  transform: translateY(-1px);
+}
+
+.certificatePreviewCard {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: linear-gradient(135deg, rgba(255, 247, 224, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.certificatePreviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.certificatePreviewBadge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.goldColor {
+  color: #b8860b;
+}
+
+.certificatePreviewCard h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary-mid);
+  margin-bottom: var(--space-2);
+}
+
+.certificatePreviewCard p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.previewMeta {
+  color: var(--text-muted-light) !important;
+  font-size: var(--font-size-sm);
+}
+
+.lessonDuration {
+  max-width: 150px;
+  text-align: right;
+  color: var(--text-muted-light);
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .courseList {

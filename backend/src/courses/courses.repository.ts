@@ -17,13 +17,16 @@ export class CoursesRepository {
 
   async findAll(): Promise<Course[]> {
     return this.repo.find({
-      relations: { enrollments: { participant: true } },
+      relations: { enrollments: { participant: true }, videos: true },
       order: { id: 'ASC' },
     });
   }
 
   async findOne(id: number): Promise<Course | null> {
-    return this.repo.findOne({ where: { id } });
+    return this.repo.findOne({
+      where: { id },
+      relations: { videos: true },
+    });
   }
 
   async update(id: number, data: Partial<Course>): Promise<Course | null> {

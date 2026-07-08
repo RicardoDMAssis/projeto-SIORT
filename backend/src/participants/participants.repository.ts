@@ -38,6 +38,16 @@ export class ParticipantsRepository {
     return this.repo.findOne({ where: { id } });
   }
 
+  async update(id: number, data: Partial<Participant>): Promise<Participant | null> {
+    await this.repo.update(id, data);
+    return this.findOne(id);
+  }
+
+  async remove(id: number): Promise<boolean> {
+    const result = await this.repo.delete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
   async count(): Promise<number> {
     return this.repo.count();
   }

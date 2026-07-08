@@ -78,14 +78,14 @@
 .title {
   font-size: var(--font-size-6xl);
   font-weight: 800;
-  color: var(--primary-mid);
+  color: var(--accent-bright);
   line-height: 1.1;
   margin-bottom: var(--space-6);
   letter-spacing: -0.03em;
 }
 
 .titleAccent {
-  background: linear-gradient(135deg, var(--primary-mid), var(--accent-bright));
+  background: linear-gradient(180deg, var(--accent-bright), var(--primary-mid));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -376,7 +376,7 @@
   padding: var(--space-3);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(91, 181, 245, 0.25);
-  color: var(--white);
+  color: var(--accent-bright);
   border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: var(--font-size-sm);
@@ -392,6 +392,7 @@
   border-color: transparent;
   transform: translateY(-1px);
   box-shadow: 0 4px 15px rgba(91, 181, 245, 0.3);
+  color: var(--white);
 }
 
 .enrolledBtn {

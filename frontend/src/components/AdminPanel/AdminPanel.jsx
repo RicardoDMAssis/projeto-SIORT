@@ -15,33 +15,59 @@ import {
   ChevronUp,
   Mail,
   Phone,
-  FileText
+  FileText,
+  UserPlus
 } from 'lucide-react';
 import { 
   fetchCourses, 
   createCourse, 
   updateCourse, 
   deleteCourse, 
-  fetchParticipants 
+  fetchParticipants,
+  updateParticipant,
+  deleteParticipant,
+  registerParticipant,
+  toggleEnrollment,
 } from '../../services/api';
 import styles from './AdminPanel.module.css';
 
-export default function AdminPanel({ onBackToLanding }) {
+const getTabFromRoute = (route) => {
+  switch (route) {
+    case 'students':
+    case 'participants':
+    case 'overview':
+      return 'participants';
+    case 'subscriptions':
+    case 'enrollments':
+      return 'enrollments';
+    case 'courses':
+    case 'minicursos':
+      return 'crud';
+    default:
+      return 'participants';
+  }
+};
+
+export default function AdminPanel({ onBackToLanding, currentRoute = 'overview', onNavigateRoute = () => {} }) {
   const [courses, setCourses] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
   // Tabs: 'participants' | 'enrollments' | 'crud'
-  const [activeTab, setActiveTab] = useState('participants');
+  const [activeTab, setActiveTab] = useState(() => getTabFromRoute(currentRoute));
 
   // Search & Accordion State
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCourses, setExpandedCourses] = useState({});
+  const [selectedCourseForEnrollment, setSelectedCourseForEnrollment] = useState('');
+  const [selectedParticipantForEnrollment, setSelectedParticipantForEnrollment] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCourse, setEditingCourse] = useState(null); // null if creating, course object if editing
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [isParticipantModalOpen, setIsParticipantModalOpen] = useState(false);
+  const [editingParticipant, setEditingParticipant] = useState(null);
 
   // Form State
   const [form, setForm] = useState({
@@ -52,6 +78,19 @@ export default function AdminPanel({ onBackToLanding }) {
     schedule: '',
     tagsString: '',
   });
+
+  const [participantForm, setParticipantForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    cpf: '',
+    institution: '',
+    role: 'participant',
+  });
+
+  useEffect(() => {
+    setActiveTab(getTabFromRoute(currentRoute));
+  }, [currentRoute]);
 
   const loadAllData = async () => {
     setLoading(true);
@@ -87,6 +126,11 @@ export default function AdminPanel({ onBackToLanding }) {
     setIsModalOpen(true);
   };
 
+  const handleNavigateTab = (tab, route) => {
+    setActiveTab(tab);
+    onNavigateRoute(route);
+  };
+
   const handleOpenEditModal = (course) => {
     setEditingCourse(course);
     const tagsArr = Array.isArray(course.parsedTags)
@@ -108,6 +152,32 @@ export default function AdminPanel({ onBackToLanding }) {
     setIsModalOpen(true);
   };
 
+  const handleOpenCreateParticipantModal = () => {
+    setEditingParticipant(null);
+    setParticipantForm({
+      name: '',
+      email: '',
+      phone: '',
+      cpf: '',
+      institution: '',
+      role: 'participant',
+    });
+    setIsParticipantModalOpen(true);
+  };
+
+  const handleOpenEditParticipantModal = (participant) => {
+    setEditingParticipant(participant);
+    setParticipantForm({
+      name: participant.name || '',
+      email: participant.email || '',
+      phone: participant.phone || '',
+      cpf: participant.cpf || '',
+      institution: participant.institution || '',
+      role: participant.role || 'participant',
+    });
+    setIsParticipantModalOpen(true);
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Deseja realmente excluir este minicurso permanentemente?')) return;
     try {
@@ -115,6 +185,16 @@ export default function AdminPanel({ onBackToLanding }) {
       loadAllData();
     } catch (err) {
       alert(err.message || 'Erro ao excluir minicurso.');
+    }
+  };
+
+  const handleDeleteParticipant = async (id) => {
+    if (!confirm('Deseja remover este aluno do sistema?')) return;
+    try {
+      await deleteParticipant(id);
+      loadAllData();
+    } catch (err) {
+      alert(err.message || 'Erro ao remover aluno.');
     }
   };
 
@@ -152,6 +232,64 @@ export default function AdminPanel({ onBackToLanding }) {
     } catch (err) {
       setErrorMsg(err.message || 'Erro ao salvar minicurso.');
     }
+  };
+
+  const handleParticipantSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+
+    try {
+      if (editingParticipant) {
+        await updateParticipant(editingParticipant.id, {
+          name: participantForm.name,
+          email: participantForm.email,
+          phone: participantForm.phone,
+          cpf: participantForm.cpf,
+          institution: participantForm.institution,
+          role: participantForm.role,
+        });
+      } else {
+        await registerParticipant(
+          participantForm.name,
+          participantForm.email,
+          participantForm.phone,
+          participantForm.cpf,
+          participantForm.institution,
+          participantForm.role,
+        );
+      }
+      setIsParticipantModalOpen(false);
+      loadAllData();
+    } catch (err) {
+      setErrorMsg(err.message || 'Erro ao salvar aluno.');
+    }
+  };
+
+  const handleToggleEnrollment = async (email, courseId) => {
+    try {
+      await toggleEnrollment(email, courseId);
+      loadAllData();
+    } catch (err) {
+      alert(err.message || 'Erro ao alterar matrícula.');
+    }
+  };
+
+  const handleCreateEnrollment = async (e) => {
+    e.preventDefault();
+    if (!selectedParticipantForEnrollment || !selectedCourseForEnrollment) {
+      alert('Selecione um aluno e um minicurso para criar a matrícula.');
+      return;
+    }
+
+    const selectedParticipant = participants.find((p) => p.email === selectedParticipantForEnrollment);
+    if (!selectedParticipant) {
+      alert('Aluno não encontrado.');
+      return;
+    }
+
+    await handleToggleEnrollment(selectedParticipant.email, Number(selectedCourseForEnrollment));
+    setSelectedParticipantForEnrollment('');
+    setSelectedCourseForEnrollment('');
   };
 
   const toggleExpandCourse = (courseId) => {
@@ -197,7 +335,7 @@ export default function AdminPanel({ onBackToLanding }) {
           <button
             className={`${styles.tabBtn} ${activeTab === 'participants' ? styles.tabBtnActive : ''}`}
             onClick={() => {
-              setActiveTab('participants');
+              handleNavigateTab('participants', 'overview');
               setSearchTerm('');
             }}
           >
@@ -205,13 +343,13 @@ export default function AdminPanel({ onBackToLanding }) {
           </button>
           <button
             className={`${styles.tabBtn} ${activeTab === 'enrollments' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('enrollments')}
+            onClick={() => handleNavigateTab('enrollments', 'subscriptions')}
           >
             <UserCheck size={16} /> Cursos & Inscrições
           </button>
           <button
             className={`${styles.tabBtn} ${activeTab === 'crud' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('crud')}
+            onClick={() => handleNavigateTab('crud', 'courses')}
           >
             <BookOpen size={16} /> Gerenciamento de Minicursos
           </button>
@@ -241,9 +379,14 @@ export default function AdminPanel({ onBackToLanding }) {
                       className={styles.searchInput}
                     />
                   </div>
-                  <span className={styles.counterLabel}>
-                    Total: {filteredParticipants.length} participante(s)
-                  </span>
+                  <div className={styles.actionButtonsGroup}>
+                    <button className={styles.createBtn} onClick={handleOpenCreateParticipantModal}>
+                      <UserPlus size={16} /> Novo Aluno
+                    </button>
+                    <span className={styles.counterLabel}>
+                      Total: {filteredParticipants.length} participante(s)
+                    </span>
+                  </div>
                 </div>
 
                 <div className={styles.tableWrapper}>
@@ -255,6 +398,7 @@ export default function AdminPanel({ onBackToLanding }) {
                         <th>CPF</th>
                         <th>Telefone</th>
                         <th>Minicursos Matriculados</th>
+                        <th className={styles.alignRight}>Ações</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -299,6 +443,22 @@ export default function AdminPanel({ onBackToLanding }) {
                                 )}
                               </div>
                             </td>
+                            <td className={styles.actionsCell}>
+                              <button
+                                className={styles.actionBtnEdit}
+                                onClick={() => handleOpenEditParticipantModal(p)}
+                                title="Editar aluno"
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button
+                                className={styles.actionBtnDelete}
+                                onClick={() => handleDeleteParticipant(p.id)}
+                                title="Excluir aluno"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
                           </tr>
                         ))
                       )}
@@ -312,6 +472,39 @@ export default function AdminPanel({ onBackToLanding }) {
             {activeTab === 'enrollments' && (
               <div className={styles.enrollmentsTabContainer}>
                 <h3 className={styles.tabSectionTitle}>Distribuição de Alunos por Minicurso</h3>
+                <form className={styles.enrollmentForm} onSubmit={handleCreateEnrollment}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Selecionar aluno</label>
+                    <select
+                      className={styles.input}
+                      value={selectedParticipantForEnrollment}
+                      onChange={(e) => setSelectedParticipantForEnrollment(e.target.value)}
+                    >
+                      <option value="">Escolha um aluno</option>
+                      {participants.map((participant) => (
+                        <option key={participant.id} value={participant.email}>
+                          {participant.name} — {participant.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Selecionar minicurso</label>
+                    <select
+                      className={styles.input}
+                      value={selectedCourseForEnrollment}
+                      onChange={(e) => setSelectedCourseForEnrollment(e.target.value)}
+                    >
+                      <option value="">Escolha um minicurso</option>
+                      {courses.map((course) => (
+                        <option key={course.id} value={course.id}>
+                          {course.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button type="submit" className={styles.saveBtn}>Matricular / Desmatricular</button>
+                </form>
                 <div className={styles.coursesGrid}>
                   {courses.length === 0 ? (
                     <div className={styles.emptyGridState}>Nenhum minicurso cadastrado no sistema.</div>
@@ -354,6 +547,7 @@ export default function AdminPanel({ onBackToLanding }) {
                                         <th>E-mail</th>
                                         <th>Telefone</th>
                                         <th>CPF</th>
+                                        <th>Ação</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -366,6 +560,15 @@ export default function AdminPanel({ onBackToLanding }) {
                                             <td>{student.email}</td>
                                             <td>{student.phone}</td>
                                             <td>{student.cpf}</td>
+                                            <td>
+                                              <button
+                                                className={styles.actionBtnDelete}
+                                                onClick={() => handleToggleEnrollment(student.email, course.id)}
+                                                title="Remover matrícula"
+                                              >
+                                                <Trash2 size={14} />
+                                              </button>
+                                            </td>
                                           </tr>
                                         );
                                       })}
@@ -479,6 +682,108 @@ export default function AdminPanel({ onBackToLanding }) {
 
       {/* Create / Edit Modal */}
       <AnimatePresence>
+        {isParticipantModalOpen && (
+          <div className={styles.modalOverlay}>
+            <motion.div
+              className={styles.modalCard}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className={styles.modalHeader}>
+                <h3>{editingParticipant ? 'Editar Aluno' : 'Novo Aluno'}</h3>
+                <button className={styles.closeBtn} onClick={() => setIsParticipantModalOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleParticipantSubmit} className={styles.form}>
+                <div className={styles.fieldRowGrid}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Nome completo</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={participantForm.name}
+                      onChange={(e) => setParticipantForm({ ...participantForm, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>E-mail</label>
+                    <input
+                      type="email"
+                      className={styles.input}
+                      value={participantForm.email}
+                      onChange={(e) => setParticipantForm({ ...participantForm, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.fieldRowGrid}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Telefone</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={participantForm.phone}
+                      onChange={(e) => setParticipantForm({ ...participantForm, phone: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>CPF</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={participantForm.cpf}
+                      onChange={(e) => setParticipantForm({ ...participantForm, cpf: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.fieldRowGrid}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Instituição</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={participantForm.institution}
+                      onChange={(e) => setParticipantForm({ ...participantForm, institution: e.target.value })}
+                      placeholder="USP, UNICAMP, etc."
+                    />
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Perfil</label>
+                    <select
+                      className={styles.input}
+                      value={participantForm.role}
+                      onChange={(e) => setParticipantForm({ ...participantForm, role: e.target.value })}
+                    >
+                      <option value="participant">Participante</option>
+                      <option value="admin">Administrador</option>
+                    </select>
+                  </div>
+                </div>
+
+                {errorMsg && <p className={styles.modalError}>{errorMsg}</p>}
+
+                <div className={styles.modalActions}>
+                  <button type="button" className={styles.cancelBtn} onClick={() => setIsParticipantModalOpen(false)}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className={styles.saveBtn}>
+                    {editingParticipant ? 'Salvar Alterações' : 'Criar Aluno'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
         {isModalOpen && (
           <div className={styles.modalOverlay}>
             <motion.div

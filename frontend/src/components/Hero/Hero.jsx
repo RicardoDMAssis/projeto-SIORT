@@ -53,8 +53,8 @@ export default function Hero() {
         </motion.div>
 
         <motion.h1 variants={itemVariants} className={styles.title}>
-          I Simpósio de{' '}
-          <span className={styles.titleAccent}>Implantes Ortopédicos</span>
+          {' '}
+          <span className={styles.titleAccent}>I° Simpósio de Implantes Ortopédicos</span>
         </motion.h1>
 
         <motion.p variants={itemVariants} className={styles.subtitle}>

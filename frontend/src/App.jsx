@@ -24,8 +24,22 @@ import {
 // Section IDs for the scroll spy
 const SECTION_IDS = ['home', 'apresentacao', 'implantes', 'inscricao', 'minicursos', 'certificados'];
 
+const buildAdminPath = (route = 'overview') => {
+  switch (route) {
+    case 'students':
+      return '/admin/students';
+    case 'subscriptions':
+      return '/admin/subscriptions';
+    case 'courses':
+      return '/admin/courses';
+    default:
+      return '/admin';
+  }
+};
+
 export default function App() {
   const [view, setView] = useState('landing'); // 'landing' | 'login' | 'student-hub' | 'admin'
+  const [adminRoute, setAdminRoute] = useState('overview');
   const [courses, setCourses] = useState([]);
   const [participantCount, setParticipantCount] = useState(0);
   const [activeUser, setActiveUser] = useState(null);
@@ -33,6 +47,43 @@ export default function App() {
 
   // Scroll spy tracking
   const activeSection = useScrollSpy(SECTION_IDS);
+
+  const navigateToView = useCallback((nextView, nextRoute = 'overview') => {
+    setView(nextView);
+    if (nextView === 'admin') {
+      setAdminRoute(nextRoute);
+    } else {
+      setAdminRoute('overview');
+    }
+
+    if (typeof window !== 'undefined') {
+      const path = nextView === 'admin' ? buildAdminPath(nextRoute) : '/';
+      window.history.pushState({}, '', path);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const pathname = window.location.pathname;
+    if (pathname.startsWith('/admin')) {
+      const route = pathname.includes('/courses')
+        ? 'courses'
+        : pathname.includes('/subscriptions')
+          ? 'subscriptions'
+          : pathname.includes('/students')
+            ? 'students'
+            : 'overview';
+      setView('admin');
+      setAdminRoute(route);
+    } else if (pathname === '/login') {
+      setView('login');
+    } else if (pathname === '/student-hub') {
+      setView('student-hub');
+    } else {
+      setView('landing');
+    }
+  }, []);
 
   // Load initial data
   const loadData = useCallback(async () => {
@@ -88,9 +139,9 @@ export default function App() {
     }
 
     if (user.role === 'admin') {
-      setView('admin');
+      navigateToView('admin', 'overview');
     } else {
-      setView('student-hub');
+      navigateToView('student-hub');
     }
     console.log('[SIORT] Usuário conectado:', user);
   }, []);
@@ -111,13 +162,19 @@ export default function App() {
     <>
       <Navbar 
         activeSection={activeSection} 
-        onNavigate={setView} 
+        onNavigate={(nextView) => {
+          if (nextView === 'admin') {
+            navigateToView('admin', 'overview');
+          } else {
+            navigateToView(nextView);
+          }
+        }} 
         currentView={view} 
         activeUser={activeUser}
         onLogout={() => {
           setActiveUser(null);
           setUserEnrollments([]);
-          setView('landing');
+          navigateToView('landing');
         }}
       />
 
@@ -169,17 +226,20 @@ export default function App() {
           activeUser={activeUser}
           courses={courses}
           userEnrollments={userEnrollments}
+          onEnroll={handleEnroll}
           onLogout={() => {
             setActiveUser(null);
             setUserEnrollments([]);
-            setView('landing');
+            navigateToView('landing');
           }}
         />
       )}
 
       {view === 'admin' && (
         <AdminPanel
-          onBackToLanding={() => setView('landing')}
+          currentRoute={adminRoute}
+          onNavigateRoute={setAdminRoute}
+          onBackToLanding={() => navigateToView('landing')}
         />
       )}
 
