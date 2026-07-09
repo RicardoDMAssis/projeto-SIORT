@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.04) 100%);
+  background: #ffffff;
   color: var(--text);
 }
 
@@ -551,6 +551,24 @@
   background: rgba(239, 68, 68, 0.15);
 }
 
+.actionBtnVideo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.actionBtnVideo:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
 /* Modal Layout */
 .modalOverlay {
   position: fixed;
@@ -715,3 +733,248 @@
   background: var(--primary-mid);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
 }
+
+.settingsTabContainer {
+  padding: var(--space-4) 0;
+  max-width: 600px;
+}
+
+.settingsForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  background: var(--surface-alt);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.fieldHelp {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.enrollmentForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 600px;
+  background: var(--surface-alt);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--space-8);
+}
+
+.enrollmentStateBadge {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  display: inline-block;
+  width: fit-content;
+}
+
+.stateEnrolled {
+  color: #15803d;
+  background: rgba(21, 128, 61, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.stateNotEnrolled {
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.enrollmentActionsRow {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.enrollBtn,
+.unenrollBtn {
+  flex: 1;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  border: none;
+}
+
+.enrollBtn {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.enrollBtn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.unenrollBtn {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.unenrollBtn:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.enrollBtn:disabled,
+.unenrollBtn:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Admin Login Page */
+.loginContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #ffffff;
+  padding: var(--space-6);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.loginHeader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.loginShieldIcon {
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.loginTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -0.02em;
+}
+
+.loginSubtitle {
+  font-size: var(--font-size-sm);
+  color: #475569;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.loginErrorAlert {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  font-weight: 500;
+}
+
+.loginFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.loginLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.loginInput {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-lg);
+  color: #000000;
+  font-size: var(--font-size-base);
+  transition: all var(--transition-base);
+}
+
+.loginInput:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.loginSubmitBtn {
+  margin-top: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  background: #000000;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.loginSubmitBtn:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+
+.loginBackBtn {
+  background: transparent;
+  border: none;
+  color: #475569;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  margin-top: var(--space-2);
+  transition: color var(--transition-fast);
+}
+
+.loginBackBtn:hover {
+  color: #000000;
+}
+
+
+

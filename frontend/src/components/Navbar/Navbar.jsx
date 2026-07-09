@@ -80,13 +80,15 @@ export default function Navbar({ activeSection, onNavigate, currentView = 'landi
               >
                 Implantes
               </a>
-              <a
-                href="#minicursos"
-                className={`${styles.navLink} ${activeSection === 'minicursos' ? styles.navLinkActive : ''}`}
-                onClick={(e) => handleNavClick(e, 'minicursos')}
+              <button
+                className={`${styles.navLink} ${currentView === 'minicourses' ? styles.navLinkActive : ''}`}
+                onClick={() => {
+                  setMobileOpen(false);
+                  onNavigate('minicourses');
+                }}
               >
                 Minicursos
-              </a>
+              </button>
               <a
                 href="#certificados"
                 className={`${styles.navLink} ${activeSection === 'certificados' ? styles.navLinkActive : ''}`}

@@ -1,5 +1,5 @@
 .section {
-  background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(37, 99, 235, 0.05) 100%);
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   min-height: 100vh;
@@ -27,7 +27,7 @@
   display: inline-block;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--accent-glow);
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: var(--space-4);
@@ -62,7 +62,7 @@
   height: 600px;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(37, 99, 235, 0.08) 100%);
+  background: #ffffff;
   border: 1px solid rgba(37, 99, 235, 0.14);
 }
 
@@ -155,7 +155,7 @@
 
 .jointSubtitle {
   font-size: var(--font-size-sm);
-  color: var(--accent-glow);
+  color: var(--text);
   font-weight: 500;
 }
 

@@ -13,10 +13,10 @@
   --surface-dark: #FFFFFF;
   --surface-dark-alt: #F8FAFC;
   --white: #FFFFFF;
-  --text: #0F172A;
-  --text-light: #1E293B;
-  --text-muted: #30445f;
-  --text-muted-light: #949494;
+  --text: #000000;
+  --text-light: #000000;
+  --text-muted: #000000;
+  --text-muted-light: #000000;
   --success: #10B981;
   --success-bg: #D1FAE5;
   --error: #EF4444;
@@ -106,7 +106,7 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   color: var(--text);
-  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%) fixed;
+  background: #ffffff;
   overflow-x: hidden;
   color-scheme: light;
 }

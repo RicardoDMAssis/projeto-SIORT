@@ -14,9 +14,10 @@ import {
   LoaderCircle,
 } from 'lucide-react';
 import styles from './StudentHub.module.css';
+import CertificateModal from '../CertificateModal/CertificateModal';
 import { fetchCertificateData, fetchCourseVideos, markVideoAsCompleted } from '../../services/api';
 
-export default function StudentHub({ activeUser, courses = [], userEnrollments = [], onLogout, onEnroll }) {
+export default function StudentHub({ activeUser, courses = [], userEnrollments = [], onLogout, onEnroll, onBack }) {
   const myCourses = useMemo(() => {
     return courses.filter((c) => userEnrollments.includes(c.id));
   }, [courses, userEnrollments]);
@@ -31,8 +32,8 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
   const [completedVideoIds, setCompletedVideoIds] = useState({});
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
-  const [activeCertificate, setActiveCertificate] = useState(null);
   const [isSavingVideo, setIsSavingVideo] = useState(false);
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
 
   useEffect(() => {
     if (myCourses.length > 0) {
@@ -148,7 +149,7 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
     setIsSavingVideo(true);
 
     try {
-      const result = await markVideoAsCompleted(activeUser.email, selectedCourse.id, video.id);
+      await markVideoAsCompleted(activeUser.email, selectedCourse.id, video.id);
 
       setCompletedVideoIds((prev) => {
         const previousSet = prev[selectedCourse.id] instanceof Set ? prev[selectedCourse.id] : new Set();
@@ -161,55 +162,11 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
 
       const refreshedCertificateData = await fetchCertificateData(activeUser.email);
       setCertificateData(refreshedCertificateData);
-
-      if (result?.enrollmentCompleted) {
-        setActiveCertificate(selectedCourse);
-      }
     } catch (error) {
       console.error('[SIORT] Erro ao marcar vídeo como concluído:', error);
     } finally {
       setIsSavingVideo(false);
     }
-  };
-
-  const handleGenerateCertificate = () => {
-    if (!selectedCourseCompleted || !certificateData?.participant) return;
-    setActiveCertificate(selectedCourse);
-  };
-
-  const handleDownloadCertificate = () => {
-    if (!activeCertificate || !certificateData?.participant) return;
-
-    const participant = certificateData.participant;
-    const certificateHtml = `<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <title>Certificado SIORT</title>
-    <style>
-      body { font-family: Arial, sans-serif; padding: 40px; color: #12213f; }
-      .card { border: 3px solid #d4af37; border-radius: 16px; padding: 32px; }
-      h1 { text-align: center; margin-bottom: 12px; }
-      p { line-height: 1.6; }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>Certificado de Conclusão</h1>
-      <p><strong>${participant.name}</strong></p>
-      <p>Certificamos que você concluiu com aproveitamento o minicurso <strong>${activeCertificate.title}</strong>, ministrado no SIORT 2026.</p>
-      <p>Este certificado foi emitido a partir do registro do portal do aluno e pode ser visualizado diretamente na aba StudentHub.</p>
-    </div>
-  </body>
-</html>`;
-
-    const blob = new Blob([certificateHtml], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `certificado-${activeCertificate.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   const getVideoPlayerConfig = (video) => {
@@ -241,6 +198,9 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
           <span className={styles.viewName}>Portal do Aluno</span>
         </div>
         <div className={styles.navRight}>
+          <button className={styles.backLinkBtn} onClick={onBack}>
+            Voltar ao Início
+          </button>
           <span className={styles.welcomeText}>
             Olá, <strong>{activeUser?.name}</strong>
           </span>
@@ -356,49 +316,20 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
                     <h3>Certificado do minicurso</h3>
                     <p>
                       {selectedCourseCompleted
-                        ? 'Seu curso já está elegível para certificado. Visualize ou baixe o comprovante aqui.'
+                        ? 'Seu curso está elegível para certificado.'
                         : 'Conclua todas as aulas para gerar o certificado do minicurso.'}
                     </p>
                   </div>
                   <div className={styles.certificateActions}>
                     <button
                       className={styles.certificateActionBtn}
-                      onClick={handleGenerateCertificate}
+                      onClick={() => setIsCertModalOpen(true)}
                       disabled={!selectedCourseCompleted}
                     >
                       <FileText size={16} />
-                      {activeCertificate?.id === selectedCourse.id ? 'Certificado aberto' : 'Gerar/visualizar'}
+                      Gerar Certificado
                     </button>
-                    {activeCertificate?.id === selectedCourse.id && (
-                      <button className={styles.certificateActionBtnSecondary} onClick={handleDownloadCertificate}>
-                        <Download size={16} /> Baixar
-                      </button>
-                    )}
                   </div>
-
-                  <AnimatePresence mode="wait">
-                    {activeCertificate?.id === selectedCourse.id && (
-                      <motion.div
-                        key={selectedCourse.id}
-                        initial={{ opacity: 0, y: 14 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.25 }}
-                        className={styles.certificatePreviewCard}
-                      >
-                        <div className={styles.certificatePreviewHeader}>
-                          <span className={styles.certificatePreviewBadge}>SIORT 2026</span>
-                          <Award size={20} className={styles.goldColor} />
-                        </div>
-                        <h4>Certificado de Conclusão</h4>
-                        <p>
-                          Este documento certifica que <strong>{certificateData?.participant?.name}</strong> concluiu o minicurso{' '}
-                          <strong>{selectedCourse.title}</strong> com aproveitamento.
-                        </p>
-                        <p className={styles.previewMeta}>Emitido diretamente pelo portal do aluno.</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
               </motion.div>
             )}
@@ -515,6 +446,13 @@ export default function StudentHub({ activeUser, courses = [], userEnrollments =
           </aside>
         </div>
       )}
+
+      <CertificateModal
+        isOpen={isCertModalOpen}
+        onClose={() => setIsCertModalOpen(false)}
+        certificateData={certificateData}
+        courses={courses}
+      />
     </div>
   );
 }

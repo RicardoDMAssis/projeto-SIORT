@@ -16,7 +16,8 @@ import {
   Mail,
   Phone,
   FileText,
-  UserPlus
+  UserPlus,
+  Film,
 } from 'lucide-react';
 import { 
   fetchCourses, 
@@ -28,8 +29,11 @@ import {
   deleteParticipant,
   registerParticipant,
   toggleEnrollment,
+  fetchSetting,
+  saveSetting,
 } from '../../services/api';
 import styles from './AdminPanel.module.css';
+import VideoManagerModal from '../VideoManagerModal/VideoManagerModal';
 
 const getTabFromRoute = (route) => {
   switch (route) {
@@ -43,18 +47,29 @@ const getTabFromRoute = (route) => {
     case 'courses':
     case 'minicursos':
       return 'crud';
+    case 'settings':
+    case 'config':
+      return 'settings';
     default:
       return 'participants';
   }
 };
 
 export default function AdminPanel({ onBackToLanding, currentRoute = 'overview', onNavigateRoute = () => {} }) {
+  // Authentication State
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    return localStorage.getItem('siort_admin_authenticated') === 'true';
+  });
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   const [courses, setCourses] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
-  // Tabs: 'participants' | 'enrollments' | 'crud'
+  // Tabs: 'participants' | 'enrollments' | 'crud' | 'settings'
   const [activeTab, setActiveTab] = useState(() => getTabFromRoute(currentRoute));
 
   // Search & Accordion State
@@ -63,11 +78,34 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
   const [selectedCourseForEnrollment, setSelectedCourseForEnrollment] = useState('');
   const [selectedParticipantForEnrollment, setSelectedParticipantForEnrollment] = useState('');
 
+  // Settings State
+  const [aboutVideoUrl, setAboutVideoUrl] = useState('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [isParticipantModalOpen, setIsParticipantModalOpen] = useState(false);
   const [editingParticipant, setEditingParticipant] = useState(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [selectedCourseForVideos, setSelectedCourseForVideos] = useState(null);
+
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    setLoginError('');
+    if (adminUsername === 'admin' && adminPassword === 'admin1234') {
+      setIsAdminAuthenticated(true);
+      localStorage.setItem('siort_admin_authenticated', 'true');
+    } else {
+      setLoginError('Usuário ou senha incorretos.');
+    }
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('siort_admin_authenticated');
+    setIsAdminAuthenticated(false);
+    onBackToLanding();
+  };
 
   // Form State
   const [form, setForm] = useState({
@@ -96,12 +134,14 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
     setLoading(true);
     setErrorMsg('');
     try {
-      const [coursesData, participantsData] = await Promise.all([
+      const [coursesData, participantsData, aboutVideoData] = await Promise.all([
         fetchCourses(),
-        fetchParticipants()
+        fetchParticipants(),
+        fetchSetting('about_video_url').catch(() => ({ value: 'https://www.youtube.com/embed/d3F-iY1u_rY' })),
       ]);
       setCourses(coursesData);
       setParticipants(participantsData);
+      setAboutVideoUrl(aboutVideoData?.value || '');
     } catch (err) {
       setErrorMsg(err.message || 'Erro ao carregar dados administrativos.');
     } finally {
@@ -112,6 +152,21 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
   useEffect(() => {
     loadAllData();
   }, []);
+
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    setErrorMsg('');
+    try {
+      await saveSetting('about_video_url', aboutVideoUrl.trim());
+      alert('Configurações salvas com sucesso!');
+    } catch (err) {
+      setErrorMsg(err.message || 'Erro ao salvar configurações.');
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
 
   const handleOpenCreateModal = () => {
     setEditingCourse(null);
@@ -274,16 +329,29 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
     }
   };
 
-  const handleCreateEnrollment = async (e) => {
-    e.preventDefault();
+  const handleEnrollmentAction = async (action) => {
     if (!selectedParticipantForEnrollment || !selectedCourseForEnrollment) {
-      alert('Selecione um aluno e um minicurso para criar a matrícula.');
+      alert('Selecione um aluno e um minicurso.');
       return;
     }
 
     const selectedParticipant = participants.find((p) => p.email === selectedParticipantForEnrollment);
     if (!selectedParticipant) {
       alert('Aluno não encontrado.');
+      return;
+    }
+
+    const isEnrolled = selectedParticipant.enrollments?.some(
+      (e) => e.courseId === Number(selectedCourseForEnrollment)
+    );
+
+    if (action === 'enroll' && isEnrolled) {
+      alert('Este aluno já está matriculado neste minicurso.');
+      return;
+    }
+
+    if (action === 'unenroll' && !isEnrolled) {
+      alert('Este aluno não está matriculado neste minicurso.');
       return;
     }
 
@@ -309,6 +377,57 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
     );
   });
 
+  if (!isAdminAuthenticated) {
+    return (
+      <div className={styles.loginContainer}>
+        <div className={styles.loginCard}>
+          <div className={styles.loginHeader}>
+            <span className={styles.loginShieldIcon}><Shield size={36} /></span>
+            <h2 className={styles.loginTitle}>Acesso Administrativo</h2>
+            <p className={styles.loginSubtitle}>Faça login para gerenciar a plataforma SIORT</p>
+          </div>
+
+          <form onSubmit={handleAdminLogin} className={styles.loginForm}>
+            {loginError && (
+              <div className={styles.loginErrorAlert}>
+                {loginError}
+              </div>
+            )}
+            <div className={styles.loginFieldGroup}>
+              <label className={styles.loginLabel}>Usuário</label>
+              <input
+                type="text"
+                placeholder="Digite o usuário"
+                className={styles.loginInput}
+                value={adminUsername}
+                onChange={(e) => setAdminUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className={styles.loginFieldGroup}>
+              <label className={styles.loginLabel}>Senha</label>
+              <input
+                type="password"
+                placeholder="Digite a senha"
+                className={styles.loginInput}
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className={styles.loginSubmitBtn}>
+              Entrar no Painel
+            </button>
+          </form>
+
+          <button className={styles.loginBackBtn} onClick={onBackToLanding}>
+            <ArrowLeft size={14} /> Voltar para a Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       {/* Admin Header */}
@@ -317,7 +436,7 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
           <span className={styles.shieldIcon}><Shield size={20} /></span>
           <span className={styles.viewName}>SIORT 2026 — Painel de Controle</span>
         </div>
-        <button className={styles.backBtn} onClick={onBackToLanding}>
+        <button className={styles.backBtn} onClick={handleAdminLogout}>
           <ArrowLeft size={16} /> Sair do Painel
         </button>
       </header>
@@ -352,6 +471,12 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
             onClick={() => handleNavigateTab('crud', 'courses')}
           >
             <BookOpen size={16} /> Gerenciamento de Minicursos
+          </button>
+          <button
+            className={`${styles.tabBtn} ${activeTab === 'settings' ? styles.tabBtnActive : ''}`}
+            onClick={() => handleNavigateTab('settings', 'settings')}
+          >
+            <Film size={16} /> Configurações Gerais
           </button>
         </div>
 
@@ -472,7 +597,7 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
             {activeTab === 'enrollments' && (
               <div className={styles.enrollmentsTabContainer}>
                 <h3 className={styles.tabSectionTitle}>Distribuição de Alunos por Minicurso</h3>
-                <form className={styles.enrollmentForm} onSubmit={handleCreateEnrollment}>
+                <div className={styles.enrollmentForm}>
                   <div className={styles.fieldGroup}>
                     <label className={styles.label}>Selecionar aluno</label>
                     <select
@@ -503,8 +628,50 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
                       ))}
                     </select>
                   </div>
-                  <button type="submit" className={styles.saveBtn}>Matricular / Desmatricular</button>
-                </form>
+
+                  {selectedParticipantForEnrollment && selectedCourseForEnrollment && (
+                    <div className={styles.enrollmentStateBadge}>
+                      {participants.find((p) => p.email === selectedParticipantForEnrollment)?.enrollments?.some(
+                        (e) => e.courseId === Number(selectedCourseForEnrollment)
+                      ) ? (
+                        <span className={styles.stateEnrolled}>✅ Matrícula ATIVA para este curso</span>
+                      ) : (
+                        <span className={styles.stateNotEnrolled}>❌ Sem matrícula para este curso</span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className={styles.enrollmentActionsRow}>
+                    <button
+                      type="button"
+                      className={styles.enrollBtn}
+                      onClick={() => handleEnrollmentAction('enroll')}
+                      disabled={
+                        !selectedParticipantForEnrollment || 
+                        !selectedCourseForEnrollment ||
+                        participants.find((p) => p.email === selectedParticipantForEnrollment)?.enrollments?.some(
+                          (e) => e.courseId === Number(selectedCourseForEnrollment)
+                        )
+                      }
+                    >
+                      Matricular
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.unenrollBtn}
+                      onClick={() => handleEnrollmentAction('unenroll')}
+                      disabled={
+                        !selectedParticipantForEnrollment || 
+                        !selectedCourseForEnrollment ||
+                        !participants.find((p) => p.email === selectedParticipantForEnrollment)?.enrollments?.some(
+                          (e) => e.courseId === Number(selectedCourseForEnrollment)
+                        )
+                      }
+                    >
+                      Desmatricular
+                    </button>
+                  </div>
+                </div>
                 <div className={styles.coursesGrid}>
                   {courses.length === 0 ? (
                     <div className={styles.emptyGridState}>Nenhum minicurso cadastrado no sistema.</div>
@@ -652,6 +819,16 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
                               </td>
                               <td className={styles.actionsCell}>
                                 <button
+                                  className={styles.actionBtnVideo}
+                                  onClick={() => {
+                                    setSelectedCourseForVideos(course);
+                                    setIsVideoModalOpen(true);
+                                  }}
+                                  title="Gerenciar Vídeos"
+                                >
+                                  <Film size={16} />
+                                </button>
+                                <button
                                   className={styles.actionBtnEdit}
                                   onClick={() => handleOpenEditModal(course)}
                                   title="Editar"
@@ -673,6 +850,39 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+
+            {/* TAB 4: Settings */}
+            {activeTab === 'settings' && (
+              <div className={styles.settingsTabContainer}>
+                <h3 className={styles.tabSectionTitle}>Configurações Gerais do Sistema</h3>
+                <p className={styles.tabSectionSubtitle}>Ajuste variáveis globais da plataforma SIORT.</p>
+
+                <form onSubmit={handleSaveSettings} className={styles.settingsForm}>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Link do Vídeo do "Sobre" (Apresentação)</label>
+                    <input
+                      type="url"
+                      className={styles.input}
+                      placeholder="Ex: https://www.youtube.com/embed/d3F-iY1u_rY"
+                      value={aboutVideoUrl}
+                      onChange={(e) => setAboutVideoUrl(e.target.value)}
+                      required
+                    />
+                    <small className={styles.fieldHelp}>
+                      Cole a URL de incorporação (embed) do YouTube ou link direto do vídeo.
+                    </small>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={styles.saveBtn}
+                    disabled={isSavingSettings}
+                  >
+                    {isSavingSettings ? 'Salvando...' : 'Salvar Alterações'}
+                  </button>
+                </form>
               </div>
             )}
 
@@ -896,6 +1106,12 @@ export default function AdminPanel({ onBackToLanding, currentRoute = 'overview',
           </div>
         )}
       </AnimatePresence>
+
+      <VideoManagerModal
+        isOpen={isVideoModalOpen}
+        onClose={() => { setIsVideoModalOpen(false); setSelectedCourseForVideos(null); }}
+        course={selectedCourseForVideos}
+      />
     </div>
   );
 }

@@ -158,4 +158,63 @@ export async function deleteParticipant(id) {
   return res.json();
 }
 
+// ─── ADMIN VIDEO CRUD ───────────────────────────────────────────────
+
+export async function createCourseVideo(courseId, dto) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao adicionar vídeo');
+  }
+  return res.json();
+}
+
+export async function updateCourseVideo(courseId, videoId, dto) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos/${videoId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao atualizar vídeo');
+  }
+  return res.json();
+}
+
+export async function deleteCourseVideo(courseId, videoId) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos/${videoId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao excluir vídeo');
+  }
+  return res.json();
+}
+
+// ─── SETTINGS CRUD ──────────────────────────────────────────────────
+
+export async function fetchSetting(key) {
+  const res = await fetch(`${API_BASE}/settings/${key}`);
+  if (!res.ok) throw new Error(`Erro ao obter configuração ${key}`);
+  return res.json();
+}
+
+export async function saveSetting(key, value) {
+  const res = await fetch(`${API_BASE}/settings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, value }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `Erro ao salvar configuração ${key}`);
+  }
+  return res.json();
+}
 

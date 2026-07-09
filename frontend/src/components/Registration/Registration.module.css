@@ -1,6 +1,6 @@
 .section {
   padding: var(--space-24) 0;
-  background: linear-gradient(135deg, var(--white) 0%, rgba(15, 118, 110, 0.05) 100%);
+  background: #ffffff;
   color: var(--text);
   min-height: 80vh;
   display: flex;
@@ -26,7 +26,7 @@
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--accent-glow);
+  color: #000000;
   letter-spacing: 0.15em;
   margin-bottom: var(--space-3);
   text-transform: uppercase;
@@ -37,7 +37,7 @@
   font-weight: 800;
   line-height: 1.25;
   margin-bottom: var(--space-6);
-  background: linear-gradient(135deg, var(--primary-light), var(--accent-bright));
+  background: linear-gradient(135deg, #000000, #333333);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -54,27 +54,23 @@
 .counterCard {
   display: flex;
   gap: var(--space-4);
-  background: rgba(20, 66, 114, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(91, 181, 245, 0.15);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid #cbd5e1;
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   margin-bottom: var(--space-6);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .counterIcon {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-lg);
-  background: rgba(91, 181, 245, 0.15);
-  color: var(--accent-glow);
+  background: rgba(0, 0, 0, 0.05);
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 15px rgba(91, 181, 245, 0.1);
-  animation: floatY 4s ease-in-out infinite;
 }
 
 .counterDetails {
@@ -91,10 +87,9 @@
 .counterValue {
   font-size: var(--font-size-4xl);
   font-weight: 900;
-  color: var(--white);
+  color: #000000;
   line-height: 1.1;
   margin: var(--space-1) 0;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .counterSubtitle {
@@ -126,7 +121,7 @@
 .activeUserName {
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--white);
+  color: #000000;
 }
 
 .activeUserEmail {
@@ -182,7 +177,7 @@
 
 .tabsHeader {
   display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: var(--space-6);
 }
 
@@ -192,25 +187,25 @@
   text-align: center;
   font-weight: 600;
   font-size: var(--font-size-sm);
-  color: var(--text-muted-light);
+  color: #475569;
   border-bottom: 2px solid transparent;
   transition: all var(--transition-fast);
 }
 
 .tabBtn:hover {
-  color: var(--white);
+  color: #000000;
 }
 
 .activeTab {
-  color: var(--accent-glow);
-  border-bottom-color: var(--accent-glow);
+  color: #000000;
+  border-bottom-color: #000000;
 }
 
 .panelTitle {
   font-size: var(--font-size-xl);
   font-weight: 700;
   margin-bottom: var(--space-4);
-  color: var(--white);
+  color: #000000;
 }
 
 .loginSubtitle {
@@ -260,18 +255,18 @@
 .input {
   width: 100%;
   padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
-  background: rgba(13, 27, 42, 0.8);
-  border: 1px solid rgba(91, 181, 245, 0.2);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: var(--radius-lg);
-  color: var(--white);
+  color: #000000;
   transition: all var(--transition-base);
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--accent-glow);
-  box-shadow: 0 0 15px rgba(91, 181, 245, 0.25);
-  background: rgba(13, 27, 42, 0.9);
+  border-color: #000000;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
 }
 
 .inputError {
