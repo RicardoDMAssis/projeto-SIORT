@@ -5,6 +5,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Enrollment } from '../enrollments/enrollment.entity';
+import { CourseVideo } from './course-video.entity';
 
 @Entity('courses')
 export class Course {
@@ -31,4 +32,7 @@ export class Course {
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.course)
   enrollments: Enrollment[];
+
+  @OneToMany(() => CourseVideo, (video) => video.course)
+  videos: CourseVideo[];
 }

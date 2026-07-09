@@ -146,10 +146,6 @@ export default function Registration({
     }
   };
 
-  // Live registration counter calculation (base mock number 142 + actual state count)
-  const counterBase = 142;
-  const totalSubscribers = counterBase + participantCount;
-
   return (
     <section className={styles.section} id="inscricao">
       <div className="container">
@@ -176,7 +172,7 @@ export default function Registration({
               <div className={styles.counterDetails}>
                 <span className={styles.counterTitle}>Participantes Confirmados</span>
                 <span className={styles.counterValue}>
-                  {totalSubscribers}
+                  {participantCount}
                 </span>
                 <span className={styles.counterSubtitle}>
                   Vagas preenchendo rapidamente (limite de 300)

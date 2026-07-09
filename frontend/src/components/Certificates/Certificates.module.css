@@ -1,7 +1,7 @@
 .section {
   padding: var(--space-20) 0;
-  background: linear-gradient(180deg, var(--primary-mid) 0%, var(--surface-dark) 100%);
-  color: var(--white);
+  background: #ffffff;
+  color: var(--text);
   min-height: 85vh;
   display: flex;
   align-items: center;
@@ -16,7 +16,7 @@
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--accent-glow);
+  color: #000000;
   letter-spacing: 0.15em;
   margin-bottom: var(--space-3);
   text-transform: uppercase;
@@ -26,7 +26,8 @@
   font-size: var(--font-size-4xl);
   font-weight: 800;
   margin-bottom: var(--space-4);
-  background: linear-gradient(135deg, var(--white), var(--accent-bright));
+  background: linear-gradient(135deg, #000000, #333333);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -72,10 +73,10 @@
 .searchInput {
   width: 100%;
   padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
-  background: rgba(13, 27, 42, 0.7);
-  border: 1px solid rgba(91, 181, 245, 0.2);
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(37, 99, 235, 0.16);
   border-radius: var(--radius-lg);
-  color: var(--white);
+  color: var(--text);
   transition: all var(--transition-base);
 }
 
@@ -146,7 +147,7 @@
 
 /* Main Certificate Card */
 .certificateCard {
-  background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.08) 100%);
   border-radius: var(--radius-2xl);
   position: relative;
   overflow: hidden;

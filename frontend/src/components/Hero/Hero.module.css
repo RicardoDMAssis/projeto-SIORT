@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: radial-gradient(ellipse at 30% 50%, var(--primary-light) 0%, var(--primary) 40%, #050e1a 100%);
+  background: #ffffff;
 }
 
 .particlesContainer {
@@ -38,8 +38,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(91, 181, 245, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91, 181, 245, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 118, 110, 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
 }
@@ -57,10 +57,10 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-5);
-  background: rgba(91, 181, 245, 0.1);
-  border: 1px solid rgba(91, 181, 245, 0.25);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: var(--radius-full);
-  color: var(--accent-glow);
+  color: var(--primary);
   font-size: var(--font-size-sm);
   font-weight: 500;
   margin-bottom: var(--space-8);
@@ -70,7 +70,7 @@
 .badgeDot {
   width: 8px;
   height: 8px;
-  background: var(--accent-glow);
+  background: var(--primary);
   border-radius: 50%;
   animation: pulseGlow 2s ease-in-out infinite;
 }
@@ -78,14 +78,14 @@
 .title {
   font-size: var(--font-size-6xl);
   font-weight: 800;
-  color: var(--white);
+  color: var(--text);
   line-height: 1.1;
   margin-bottom: var(--space-6);
   letter-spacing: -0.03em;
 }
 
 .titleAccent {
-  background: linear-gradient(135deg, var(--accent-glow), var(--accent-bright));
+  background: linear-gradient(135deg, var(--primary), #000000);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -93,7 +93,7 @@
 
 .subtitle {
   font-size: var(--font-size-xl);
-  color: var(--text-muted-light);
+  color: var(--text-light);
   margin-bottom: var(--space-4);
   font-weight: 400;
   line-height: 1.6;
@@ -108,7 +108,7 @@
   justify-content: center;
   gap: var(--space-6);
   margin-bottom: var(--space-10);
-  color: var(--text-muted-light);
+  color: var(--text-muted);
   font-size: var(--font-size-sm);
   flex-wrap: wrap;
 }
@@ -120,7 +120,7 @@
 }
 
 .eventInfoItem svg {
-  color: var(--accent-glow);
+  color: var(--primary);
 }
 
 .ctas {
@@ -133,13 +133,13 @@
 
 .ctaPrimary {
   padding: var(--space-4) var(--space-10);
-  background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+  background: linear-gradient(135deg, var(--accent), var(--primary-mid));
   color: var(--white);
   border-radius: var(--radius-full);
   font-weight: 700;
   font-size: var(--font-size-lg);
   transition: all var(--transition-base);
-  box-shadow: 0 0 30px rgba(44, 116, 179, 0.4);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -159,14 +159,14 @@
 
 .ctaPrimary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 50px rgba(91, 181, 245, 0.6);
+  box-shadow: 0 0 50px rgba(16, 185, 129, 0.5);
 }
 
 .ctaSecondary {
   padding: var(--space-4) var(--space-10);
   background: transparent;
-  color: var(--white);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #000000;
+  border: 1px solid #000000;
   border-radius: var(--radius-full);
   font-weight: 600;
   font-size: var(--font-size-lg);
@@ -174,8 +174,8 @@
 }
 
 .ctaSecondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #000000;
   transform: translateY(-2px);
 }
 
@@ -188,7 +188,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  color: var(--text-muted-light);
+  color: #000000;
   font-size: var(--font-size-xs);
   animation: floatY 3s ease-in-out infinite;
 }
@@ -196,7 +196,7 @@
 .scrollLine {
   width: 1px;
   height: 40px;
-  background: linear-gradient(to bottom, var(--accent-glow), transparent);
+  background: linear-gradient(to bottom, #000000, transparent);
 }
 
 /* Mobile */

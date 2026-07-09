@@ -6,9 +6,11 @@ import {
   ManyToOne,
   JoinColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import { Participant } from '../participants/participant.entity';
 import { Course } from '../courses/course.entity';
+import { EnrollmentVideoProgress } from './enrollment-video-progress.entity';
 
 @Entity('enrollments')
 @Unique(['participantId', 'courseId'])
@@ -21,6 +23,12 @@ export class Enrollment {
 
   @Column()
   courseId: number;
+
+  @Column({ default: false })
+  isCompleted: boolean;
+
+  @Column({ nullable: true })
+  completedAt: Date;
 
   @CreateDateColumn()
   enrolledAt: Date;
@@ -36,4 +44,7 @@ export class Enrollment {
   })
   @JoinColumn({ name: 'courseId' })
   course: Course;
+
+  @OneToMany(() => EnrollmentVideoProgress, (progress) => progress.enrollment)
+  videoProgress: EnrollmentVideoProgress[];
 }

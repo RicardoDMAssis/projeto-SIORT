@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-8) var(--space-4);
-  background-color: var(--surface-dark-alt);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(37, 99, 235, 0.05) 100%);
 }
 
 .card {

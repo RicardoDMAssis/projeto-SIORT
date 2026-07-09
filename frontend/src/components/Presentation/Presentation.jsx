@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { UserPlus, BookOpen, Award, ArrowRight } from 'lucide-react';
 import styles from './Presentation.module.css';
+import { fetchSetting } from '../../services/api';
 
 function scrollTo(id) {
   const el = document.getElementById(id);
@@ -12,6 +14,18 @@ function scrollTo(id) {
 }
 
 export default function Presentation() {
+  const [aboutVideoUrl, setAboutVideoUrl] = useState('https://www.youtube.com/embed/d3F-iY1u_rY');
+
+  useEffect(() => {
+    fetchSetting('about_video_url')
+      .then((data) => {
+        if (data?.value) {
+          setAboutVideoUrl(data.value);
+        }
+      })
+      .catch((err) => console.error('[SIORT] Erro ao carregar vídeo do sobre:', err));
+  }, []);
+
   return (
     <section className={styles.section} id="apresentacao">
       <div className="container">
@@ -43,13 +57,40 @@ export default function Presentation() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className={styles.videoWrapper}>
-              <iframe
-                src="https://www.youtube.com/embed/d3F-iY1u_rY"
-                title="Vídeo de Apresentação SIORT 2026"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className={styles.iframe}
-              />
+              {(() => {
+                const config = (() => {
+                  const trimmed = aboutVideoUrl.trim();
+                  const youtubeMatch = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/i);
+                  if (youtubeMatch) {
+                    return { type: 'youtube', src: `https://www.youtube.com/embed/${youtubeMatch[1]}` };
+                  }
+                  if (/\.(mp4|webm|ogg)(\?|$)/i.test(trimmed)) {
+                    return { type: 'html5', src: trimmed };
+                  }
+                  return { type: 'youtube', src: trimmed };
+                })();
+
+                if (config.type === 'youtube') {
+                  return (
+                    <iframe
+                      src={config.src}
+                      title="Vídeo de Apresentação SIORT 2026"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className={styles.iframe}
+                    />
+                  );
+                } else {
+                  return (
+                    <video
+                      src={config.src}
+                      controls
+                      className={styles.iframe}
+                      style={{ background: '#000' }}
+                    />
+                  );
+                }
+              })()}
             </div>
             <p className={styles.videoCaption}>
               Assista à prévia das discussões científicas e cirúrgicas que ocorrerão no evento.

@@ -1,5 +1,5 @@
 .section {
-  background: var(--surface-dark);
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   min-height: 100vh;
@@ -27,7 +27,7 @@
   display: inline-block;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--accent-glow);
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: var(--space-4);
@@ -36,7 +36,7 @@
 .sectionTitle {
   font-size: var(--font-size-4xl);
   font-weight: 800;
-  color: var(--white);
+  color: var(--primary-mid);
   letter-spacing: -0.02em;
   margin-bottom: var(--space-4);
 }
@@ -62,8 +62,8 @@
   height: 600px;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #0D1B2A 0%, #050e1a 100%);
-  border: 1px solid rgba(91, 181, 245, 0.1);
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.14);
 }
 
 .canvasInstructions {
@@ -71,13 +71,13 @@
   bottom: var(--space-4);
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(10, 38, 71, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  color: var(--text-muted-light);
+  color: var(--text-muted);
   font-size: var(--font-size-xs);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
-  border: 1px solid rgba(91, 181, 245, 0.15);
+  border: 1px solid rgba(37, 99, 235, 0.12);
   white-space: nowrap;
   z-index: 5;
   pointer-events: none;
@@ -130,7 +130,7 @@
 .placeholderTitle {
   font-size: var(--font-size-xl);
   font-weight: 600;
-  color: var(--white);
+  color: var(--primary-mid);
 }
 
 .placeholderText {
@@ -149,13 +149,13 @@
 .jointName {
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--white);
+  color: var(--primary-mid);
   margin-bottom: var(--space-1);
 }
 
 .jointSubtitle {
   font-size: var(--font-size-sm);
-  color: var(--accent-glow);
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -166,8 +166,8 @@
 }
 
 .topicCard {
-  background: rgba(20, 66, 114, 0.2);
-  border: 1px solid rgba(91, 181, 245, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   transition: all var(--transition-base);
@@ -202,7 +202,7 @@
 .topicTitle {
   font-size: var(--font-size-base);
   font-weight: 700;
-  color: var(--white);
+  color: var(--primary-mid);
 }
 
 .topicDescription {
@@ -277,11 +277,11 @@
   justify-content: center;
   height: 100%;
   width: 100%;
-  color: var(--accent-glow);
+  color: var(--accent);
   font-family: var(--font-family);
-  background: rgba(10, 38, 71, 0.4);
+  background: rgba(255, 255, 255, 0.8);
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(91, 181, 245, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.12);
 }
 
 .radarWrapper {

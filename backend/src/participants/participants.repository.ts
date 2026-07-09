@@ -13,7 +13,9 @@ export class ParticipantsRepository {
   async create(data: Partial<Participant>): Promise<Participant> {
     const participant = this.repo.create(data);
     return this.repo.save(participant);
-  }  async findByEmail(email: string): Promise<Participant | null> {
+  }
+
+  async findByEmail(email: string): Promise<Participant | null> {
     return this.repo.findOne({
       where: { email: email.toLowerCase() },
     });
@@ -31,8 +33,19 @@ export class ParticipantsRepository {
       order: { registeredAt: 'DESC' },
     });
   }
+
   async findOne(id: number): Promise<Participant | null> {
     return this.repo.findOne({ where: { id } });
+  }
+
+  async update(id: number, data: Partial<Participant>): Promise<Participant | null> {
+    await this.repo.update(id, data);
+    return this.findOne(id);
+  }
+
+  async remove(id: number): Promise<boolean> {
+    const result = await this.repo.delete(id);
+    return (result.affected ?? 0) > 0;
   }
 
   async count(): Promise<number> {

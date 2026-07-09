@@ -24,8 +24,22 @@ import {
 // Section IDs for the scroll spy
 const SECTION_IDS = ['home', 'apresentacao', 'implantes', 'inscricao', 'minicursos', 'certificados'];
 
+const buildAdminPath = (route = 'overview') => {
+  switch (route) {
+    case 'students':
+      return '/admin/students';
+    case 'subscriptions':
+      return '/admin/subscriptions';
+    case 'courses':
+      return '/admin/courses';
+    default:
+      return '/admin';
+  }
+};
+
 export default function App() {
   const [view, setView] = useState('landing'); // 'landing' | 'login' | 'student-hub' | 'admin'
+  const [adminRoute, setAdminRoute] = useState('overview');
   const [courses, setCourses] = useState([]);
   const [participantCount, setParticipantCount] = useState(0);
   const [activeUser, setActiveUser] = useState(null);
@@ -33,6 +47,71 @@ export default function App() {
 
   // Scroll spy tracking
   const activeSection = useScrollSpy(SECTION_IDS);
+
+  const navigateToView = useCallback((nextView, nextRoute = 'overview') => {
+    setView(nextView);
+    if (nextView === 'admin') {
+      setAdminRoute(nextRoute);
+    } else {
+      setAdminRoute('overview');
+    }
+
+    if (typeof window !== 'undefined') {
+      const path = nextView === 'admin' ? buildAdminPath(nextRoute) : '/';
+      window.history.pushState({}, '', path);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Check if there is a saved user session in localStorage
+    const savedUserStr = localStorage.getItem('siort_user');
+    let savedUser = null;
+    if (savedUserStr) {
+      try {
+        savedUser = JSON.parse(savedUserStr);
+        setActiveUser(savedUser);
+        
+        // Fetch enrollments asynchronously
+        fetchEnrollments(savedUser.email).then((enrolls) => {
+          setUserEnrollments(enrolls.map((en) => en.courseId));
+        }).catch((err) => console.error('[SIORT] Erro ao buscar inscrições persistidas:', err));
+      } catch (e) {
+        localStorage.removeItem('siort_user');
+      }
+    }
+
+    const pathname = window.location.pathname;
+    if (pathname.startsWith('/admin')) {
+      const route = pathname.includes('/courses')
+        ? 'courses'
+        : pathname.includes('/subscriptions')
+          ? 'subscriptions'
+          : pathname.includes('/students')
+            ? 'students'
+            : 'overview';
+      setView('admin');
+      setAdminRoute(route);
+    } else if (pathname === '/login') {
+      setView('login');
+    } else if (pathname === '/student-hub') {
+      if (savedUser) {
+        setView(savedUser.role === 'admin' ? 'admin' : 'student-hub');
+      } else {
+        setView('landing');
+        window.history.pushState({}, '', '/');
+      }
+    } else {
+      // If user is logged in, restore student-hub view instead of landing on root
+      if (savedUser) {
+        setView(savedUser.role === 'admin' ? 'admin' : 'student-hub');
+        window.history.pushState({}, '', savedUser.role === 'admin' ? '/admin' : '/student-hub');
+      } else {
+        setView('landing');
+      }
+    }
+  }, []);
 
   // Load initial data
   const loadData = useCallback(async () => {
@@ -63,6 +142,7 @@ export default function App() {
     const newParticipant = await registerParticipant(formData.name, formData.email, formData.phone, formData.cpf);
     setActiveUser(newParticipant);
     setUserEnrollments([]);
+    localStorage.setItem('siort_user', JSON.stringify(newParticipant));
     
     // Refresh participant count
     try {
@@ -77,6 +157,7 @@ export default function App() {
   const handleLogin = useCallback(async (email) => {
     const user = await loginParticipant(email);
     setActiveUser(user);
+    localStorage.setItem('siort_user', JSON.stringify(user));
     
     // Fetch user enrollments
     try {
@@ -88,9 +169,9 @@ export default function App() {
     }
 
     if (user.role === 'admin') {
-      setView('admin');
+      navigateToView('admin', 'overview');
     } else {
-      setView('student-hub');
+      navigateToView('student-hub');
     }
     console.log('[SIORT] Usuário conectado:', user);
   }, []);
@@ -109,17 +190,26 @@ export default function App() {
 
   return (
     <>
-      <Navbar 
-        activeSection={activeSection} 
-        onNavigate={setView} 
-        currentView={view} 
-        activeUser={activeUser}
-        onLogout={() => {
-          setActiveUser(null);
-          setUserEnrollments([]);
-          setView('landing');
-        }}
-      />
+      {view !== 'student-hub' && view !== 'admin' && (
+        <Navbar 
+          activeSection={activeSection} 
+          onNavigate={(nextView) => {
+            if (nextView === 'admin') {
+              navigateToView('admin', 'overview');
+            } else {
+              navigateToView(nextView);
+            }
+          }} 
+          currentView={view} 
+          activeUser={activeUser}
+          onLogout={() => {
+            setActiveUser(null);
+            setUserEnrollments([]);
+            localStorage.removeItem('siort_user');
+            navigateToView('landing');
+          }}
+        />
+      )}
 
       {view === 'landing' && (
         <main>
@@ -143,17 +233,31 @@ export default function App() {
             onLogin={handleLogin}
           />
 
-          {/* Minicursos */}
+          {/* Certificados */}
+          <Certificates />
+        </main>
+      )}
+
+      {view === 'minicourses' && (
+        <main style={{ paddingTop: '80px' }}>
           <Minicourses
             activeUser={activeUser}
             courses={courses}
             userEnrollments={userEnrollments}
             onEnroll={handleEnroll}
             onLogin={handleLogin}
+            onGoToRegister={() => {
+              navigateToView('landing');
+              setTimeout(() => {
+                const el = document.getElementById('inscricao');
+                if (el) {
+                  const navbarHeight = 80;
+                  const pos = el.getBoundingClientRect().top + window.scrollY - navbarHeight;
+                  window.scrollTo({ top: pos, behavior: 'smooth' });
+                }
+              }, 150);
+            }}
           />
-
-          {/* Certificados */}
-          <Certificates />
         </main>
       )}
 
@@ -169,17 +273,22 @@ export default function App() {
           activeUser={activeUser}
           courses={courses}
           userEnrollments={userEnrollments}
+          onEnroll={handleEnroll}
+          onBack={() => setView('landing')}
           onLogout={() => {
             setActiveUser(null);
             setUserEnrollments([]);
-            setView('landing');
+            localStorage.removeItem('siort_user');
+            navigateToView('landing');
           }}
         />
       )}
 
       {view === 'admin' && (
         <AdminPanel
-          onBackToLanding={() => setView('landing')}
+          currentRoute={adminRoute}
+          onNavigateRoute={setAdminRoute}
+          onBackToLanding={() => navigateToView('landing')}
         />
       )}
 

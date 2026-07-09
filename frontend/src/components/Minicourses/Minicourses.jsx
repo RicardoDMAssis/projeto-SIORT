@@ -9,6 +9,7 @@ export default function Minicourses({
   userEnrollments = [],
   onEnroll,
   onLogin,
+  onGoToRegister,
 }) {
   const [emailInput, setEmailInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -73,14 +74,7 @@ export default function Minicourses({
 
                 <div className={styles.lockActions}>
                   <button
-                    onClick={() => {
-                      const el = document.getElementById('inscricao');
-                      if (el) {
-                        const navbarHeight = 80;
-                        const pos = el.getBoundingClientRect().top + window.scrollY - navbarHeight;
-                        window.scrollTo({ top: pos, behavior: 'smooth' });
-                      }
-                    }}
+                    onClick={onGoToRegister}
                     className={styles.lockPrimaryBtn}
                     id="gatekeeper-scroll-to-register"
                   >

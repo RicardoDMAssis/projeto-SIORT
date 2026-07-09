@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+const isTest = process.env.NODE_ENV === 'test';
+const databasePath = process.env.DB_PATH ?? './siort.sqlite';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: './siort.sqlite',
+      database: databasePath,
       autoLoadEntities: true,
-      synchronize: true, // Auto-create tables in dev
+      synchronize: true,
+      dropSchema: isTest,
     }),
   ],
 })

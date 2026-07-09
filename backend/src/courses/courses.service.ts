@@ -4,23 +4,32 @@ import {
   OnModuleInit,
   Logger,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CoursesRepository } from './courses.repository';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CreateCourseVideoDto } from './dto/create-course-video.dto';
+import { UpdateCourseVideoDto } from './dto/update-course-video.dto';
 import { Course } from './course.entity';
+import { CourseVideo } from './course-video.entity';
 
 @Injectable()
 export class CoursesService implements OnModuleInit {
   private readonly logger = new Logger(CoursesService.name);
 
-  constructor(private readonly coursesRepo: CoursesRepository) {}
+  constructor(
+    private readonly coursesRepo: CoursesRepository,
+    @InjectRepository(CourseVideo)
+    private readonly courseVideoRepo: Repository<CourseVideo>,
+  ) {}
 
   // ─── Seed initial data on first run ────────────────────────────────
   async onModuleInit(): Promise<void> {
     const count = await this.coursesRepo.count();
     if (count === 0) {
       this.logger.log('Seeding initial courses...');
-      await this.coursesRepo.create({
+      const firstCourse = await this.coursesRepo.create({
         title: 'Minicurso 1: Introdução aos Implantes',
         instructor: 'Dr. Roberto Costa (USP)',
         description:
@@ -29,7 +38,7 @@ export class CoursesService implements OnModuleInit {
         schedule: '15/08 às 14:00',
         tags: JSON.stringify(['Bioengenharia', 'Clínica']),
       });
-      await this.coursesRepo.create({
+      const secondCourse = await this.coursesRepo.create({
         title: 'Minicurso 2: Materiais Biocompatíveis',
         instructor: 'Dra. Eliana Silva (UNICAMP)',
         description:
@@ -38,6 +47,39 @@ export class CoursesService implements OnModuleInit {
         schedule: '16/08 às 14:00',
         tags: JSON.stringify(['Metalurgia', 'Biocompatibilidade']),
       });
+
+      await this.courseVideoRepo.save(
+        this.courseVideoRepo.create([
+          {
+            courseId: firstCourse.id,
+            title: 'Aula 1 - Fundamentos do tema',
+            description: 'Visão geral e conceitos iniciais.',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            order: 1,
+          },
+          {
+            courseId: firstCourse.id,
+            title: 'Aula 2 - Aplicações clínicas',
+            description: 'Casos práticos e critérios clínicos.',
+            videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+            order: 2,
+          },
+          {
+            courseId: secondCourse.id,
+            title: 'Aula 1 - Materiais e propriedades',
+            description: 'Introdução aos materiais utilizados.',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            order: 1,
+          },
+          {
+            courseId: secondCourse.id,
+            title: 'Aula 2 - Biocompatibilidade e segurança',
+            description: 'Como os materiais interagem com o organismo.',
+            videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+            order: 2,
+          },
+        ]),
+      );
       this.logger.log('✅ 2 courses seeded successfully.');
     }
   }
@@ -64,6 +106,53 @@ export class CoursesService implements OnModuleInit {
       throw new NotFoundException('Minicurso não encontrado.');
     }
     return course;
+  }
+
+  async createVideo(courseId: number, dto: CreateCourseVideoDto): Promise<CourseVideo> {
+    await this.findOne(courseId);
+
+    const video = this.courseVideoRepo.create({
+      courseId,
+      ...dto,
+    });
+
+    return this.courseVideoRepo.save(video);
+  }
+
+  async findVideos(courseId: number): Promise<CourseVideo[]> {
+    await this.findOne(courseId);
+
+    return this.courseVideoRepo.find({
+      where: { courseId },
+      order: { order: 'ASC', id: 'ASC' },
+    });
+  }
+
+  async updateVideo(
+    courseId: number,
+    videoId: number,
+    dto: UpdateCourseVideoDto,
+  ): Promise<CourseVideo> {
+    await this.findOne(courseId);
+
+    const video = await this.courseVideoRepo.findOne({ where: { id: videoId, courseId } });
+    if (!video) {
+      throw new NotFoundException('Vídeo não encontrado para este minicurso.');
+    }
+
+    Object.assign(video, dto);
+    return this.courseVideoRepo.save(video);
+  }
+
+  async removeVideo(courseId: number, videoId: number): Promise<void> {
+    await this.findOne(courseId);
+
+    const video = await this.courseVideoRepo.findOne({ where: { id: videoId, courseId } });
+    if (!video) {
+      throw new NotFoundException('Vídeo não encontrado para este minicurso.');
+    }
+
+    await this.courseVideoRepo.remove(video);
   }
 
   async update(id: number, dto: UpdateCourseDto): Promise<Course> {

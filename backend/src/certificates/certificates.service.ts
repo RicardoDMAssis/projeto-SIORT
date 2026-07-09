@@ -31,6 +31,8 @@ export class CertificatesService {
       instructor: string;
       duration: string;
       enrolledAt: Date;
+      isCompleted: boolean;
+      completedAt?: Date;
     }[];
   }> {
     const participant = await this.participantsRepo.findByEmail(
@@ -62,6 +64,8 @@ export class CertificatesService {
         instructor: en.course.instructor,
         duration: en.course.duration,
         enrolledAt: en.enrolledAt,
+        isCompleted: en.isCompleted,
+        completedAt: en.completedAt,
       })),
     };
   }

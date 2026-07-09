@@ -13,11 +13,11 @@ export async function getParticipantCount() {
   return data.count;
 }
 
-export async function registerParticipant(name, email, phone, cpf) {
+export async function registerParticipant(name, email, phone, cpf, institution = '', role = 'participant') {
   const res = await fetch(`${API_BASE}/participants`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, phone, cpf }),
+    body: JSON.stringify({ name, email, phone, cpf, institution, role }),
   });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
@@ -55,6 +55,25 @@ export async function toggleEnrollment(email, courseId) {
 export async function fetchEnrollments(email) {
   const res = await fetch(`${API_BASE}/enrollments?email=${encodeURIComponent(email)}`);
   if (!res.ok) throw new Error('Erro ao buscar inscrições');
+  return res.json();
+}
+
+export async function fetchCourseVideos(courseId) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos`);
+  if (!res.ok) throw new Error('Erro ao carregar vídeos do minicurso');
+  return res.json();
+}
+
+export async function markVideoAsCompleted(email, courseId, videoId) {
+  const res = await fetch(`${API_BASE}/enrollments/videos/completed`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, courseId, videoId }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao marcar vídeo como concluído');
+  }
   return res.json();
 }
 
@@ -115,4 +134,87 @@ export async function fetchParticipants() {
   return res.json();
 }
 
+export async function updateParticipant(id, participantData) {
+  const res = await fetch(`${API_BASE}/participants/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(participantData),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao atualizar participante');
+  }
+  return res.json();
+}
+
+export async function deleteParticipant(id) {
+  const res = await fetch(`${API_BASE}/participants/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao excluir participante');
+  }
+  return res.json();
+}
+
+// ─── ADMIN VIDEO CRUD ───────────────────────────────────────────────
+
+export async function createCourseVideo(courseId, dto) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao adicionar vídeo');
+  }
+  return res.json();
+}
+
+export async function updateCourseVideo(courseId, videoId, dto) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos/${videoId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao atualizar vídeo');
+  }
+  return res.json();
+}
+
+export async function deleteCourseVideo(courseId, videoId) {
+  const res = await fetch(`${API_BASE}/courses/${courseId}/videos/${videoId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao excluir vídeo');
+  }
+  return res.json();
+}
+
+// ─── SETTINGS CRUD ──────────────────────────────────────────────────
+
+export async function fetchSetting(key) {
+  const res = await fetch(`${API_BASE}/settings/${key}`);
+  if (!res.ok) throw new Error(`Erro ao obter configuração ${key}`);
+  return res.json();
+}
+
+export async function saveSetting(key, value) {
+  const res = await fetch(`${API_BASE}/settings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, value }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `Erro ao salvar configuração ${key}`);
+  }
+  return res.json();
+}
 
