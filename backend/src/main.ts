@@ -19,11 +19,7 @@ async function bootstrap() {
 
   // CORS — allow Vite frontend on any localhost port
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://projeto-siort.vercel.app/',
-      'http://localhost:3000',
-    ],
+    origin: ['*'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
