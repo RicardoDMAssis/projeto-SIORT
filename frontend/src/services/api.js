@@ -1,4 +1,4 @@
-const API_BASE = 'https://projeto-siort.onrender.com';
+const API_BASE = 'https://projeto-siort.onrender.com/';
 
 export async function fetchCourses() {
   const res = await fetch(`${API_BASE}/courses`);
